@@ -1,0 +1,15 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+<h1>Add User</h1>
+<div class="alert alert-primary" role="alert">
+    {{ responseMessage }}
+</div>
+<form action="/platziphp/users/add" method="POST">
+    <label for="title">Email</label>
+    <input type="text" name="email" id="email" placeholder="example@example.com"><br/>
+    <label for="description">Password</label>
+    <input type="password" name="password" id="password"><br/>
+    <button type="submit">Save</button>
+</form>
+{% endblock %}

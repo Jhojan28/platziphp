@@ -13,7 +13,7 @@ $capsule = new Capsule;
 $capsule->addConnection([
     'driver'    => 'mysql',
     'host'      => 'localhost',
-    'database'  => 'phpbasico',
+    'database'  => 'cursophp',
     'username'  => 'root',
     'password'  => '',
     'charset'   => 'utf8',
@@ -33,17 +33,25 @@ $request = Zend\Diactoros\ServerRequestFactory::fromGlobals(
 $routerContainer = new RouterContainer();
 $map = $routerContainer->getMap();
 
-$map->get('index', '/php_basico/', [
+$map->get('index', '/platziphp/', [
     'controller' => 'App\Controllers\IndexController',
     'action' => 'indexAction'
 ]);
-$map->get('addJobs', '/php_basico/jobs/add', [
+$map->get('addJobs', '/platziphp/jobs/add', [
     'controller' => 'App\Controllers\JobController',
     'action' => 'getAddJobAction'
 ]);
-$map->post('saveJobs', '/php_basico/jobs/add', [
+$map->get('addUsers', '/platziphp/users/add', [
+    'controller' => 'App\Controllers\UserController',
+    'action' => 'getAddUserAction'
+]);
+$map->post('saveJobs', '/platziphp/jobs/add', [
     'controller' => 'App\Controllers\JobController',
     'action' => 'getAddJobAction'
+]);
+$map->post('saveUsers', '/platziphp/users/add', [
+    'controller' => 'App\Controllers\UserController',
+    'action' => 'getAddUserAction'
 ]);
 $matcher = $routerContainer->getMatcher();
 $route = $matcher->match($request);

@@ -17,7 +17,8 @@ class AuthController extends BaseController {
 
         if($user) {
             if(password_verify($postData['password'], $user->password)) {
-                return new RedirectResponse('/phpbasico/admin');
+                $_SESSION['userId'] = $user->id;
+                return new RedirectResponse('/platziphp/admin');
             } else {
                 $responseMessage = "Bad credentials";
             }
@@ -27,5 +28,10 @@ class AuthController extends BaseController {
         return $this->renderHTML('login.twig', [
             'responseMessage' => $responseMessage
         ]);
+    }
+
+    public function getLogout() {
+        unset($_SESSION['userId']);
+        return new RedirectResponse('/platziphp/login');
     }
 }

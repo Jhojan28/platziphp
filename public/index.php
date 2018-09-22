@@ -5,8 +5,12 @@ ini_set('display_starup_error', 1);
 error_reporting(E_ALL);
 
 require_once '../vendor/autoload.php';
+
+session_start();
+
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Aura\Router\RouterContainer;
+use Zend\Diactoros\Response\RedirectResponse;
 
 $capsule = new Capsule;
 
@@ -57,9 +61,18 @@ $map->get('loginForm', '/platziphp/login', [
     'controller' => 'App\Controllers\AuthController',
     'action' => 'getLogin'
 ]);
+$map->get('logout', '/platziphp/logout', [
+    'controller' => 'App\Controllers\AuthController',
+    'action' => 'getLogout'
+]);
 $map->post('auth', '/platziphp/auth', [
     'controller' => 'App\Controllers\AuthController',
     'action' => 'postLogin'
+]);
+$map->get('admin', '/platziphp/admin', [
+    'controller' => 'App\Controllers\AdminController',
+    'action' => 'getIndex',
+    'auth' => true
 ]);
 $matcher = $routerContainer->getMatcher();
 $route = $matcher->match($request);
@@ -70,9 +83,16 @@ if(!$route) {
     $handlerData = $route->handler;
     $actionName = $handlerData['action'];
     $controllerName = $handlerData['controller'];
+    $needsAuth = $handlerData['auth'] ?? false;
     $controller = new $controllerName;
-    $response  = $controller->$actionName($request);
 
+    $sessionUserId = $_SESSION['userId'] ?? null;
+    if($needsAuth && !$sessionUserId) {
+        $response = new RedirectResponse('/platziphp/login');
+    }else{
+        $response  = $controller->$actionName($request);
+    }
+    
     foreach($response->getHeaders() as $name => $values) {
         foreach($values as $value ) {
             header(sprintf('%s: %s', $name, $value), false);
